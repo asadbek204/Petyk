@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static "styles/style.css" %}">
+    <script defer src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script defer src="{% static "scripts/app.js" %}"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="game-play">
+            <button class="game-play__btn-create">Создать гарем</button>
+            <div class="game-play__balance">
+                <div class="game-play__coin"><img class="game-play__coin-icon" src="{% static "images/hen-head.png" %}" alt=""></div>
+                <span class="game-play__coin-amount" id="balance">0</span>
+            </div>
+            <div class="game-play__joystick">
+                <img class="game-play__icon" id="btn-play" src="{% static "images/яйцо.png" %}" alt="">
+            </div>
+        </div>
+        <div class="energy">
+            <div class="energy__info">
+                <div class="energy__amount">
+                    <img class="energy_lightning-icon" src="{% static "images/energy-lightning.png" %}" alt="">
+                    <span id="energy-exists">1000</span>/<span id="energy-all">1000</span>
+                </div>
+                <div class="energy__extra">+<span id="bonus">0</span> <span class="energy__extra-unit">в 10 сек.</span></div>
+            </div>
+            <div class="energy__bar"><div class="energy__indicator" id="energy-indicator"></div></div>
+        </div>
+        <div class="options">
+            <button class="option" id="friends">
+                <div class="option__img-container"><img src="{% static "images/add-users.png" %}" alt="" class="option__icon"></div>
+                <span class="option__name">Друзья</span>
+            </button>
+            <button class="option" id="statistics">
+                <div class="option__img-container"><img src="{% static "images/statistics.png" %}" alt="" class="option__icon"></div>
+                <span class="option__name">Рейтинг</span>
+            </button>
+            <button class="option" id="task">
+                <div class="option__img-container"><img src="{% static "images/task.png" %}" alt="" class="option__icon"></div>
+                <span class="option__name">Задание</span>
+            </button>
+            <button class="option" id="magazin">
+                <div class="option__img-container"><img src="{% static "images/market.png" %}" alt="" class="option__icon"></div>
+                <span class="option__name">Рынок</span>
+            </button>
+        </div>
+    </div>
+    <div class="boost" id="boost">
+        <div class="boost__content">
+            <h1 class="boost__title" id="back-button">↶ Мощность</h1>
+            <ul class="boost__list" id="boost-list"></ul>
+        </div>
+    </div>
+    <div class="detail" id="detail"></div>
+    <div class="notification" id="notification"></div>
+</body>
+</html>
