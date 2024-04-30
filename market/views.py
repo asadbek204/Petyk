@@ -43,4 +43,10 @@ def buy_boost(request: Request, id: int, name: str):
     except Button.DoesNotExist:
         return Response(status=404, data={'detail': 'button not found'})
     button.users.add(user)
+    user.balance -= button.price
+    user.bonus = button.bonus
+    user.tap_step = button.tap_step
+    user.level = button.level
+    user.button = button
+    user.save()
     return Response(data={'message': 'success'})
