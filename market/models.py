@@ -1,11 +1,16 @@
 from django.db.models import *
-
+from user.models import User
 
 class Button(Model):
-    icon = ImageField(upload_to='button/icons/')
-    name = CharField(max_length=64)
+    icon = ImageField(upload_to='button/')
+    name = CharField(max_length=64, unique=True)
+    short_description = CharField(max_length=1024, null=True)
+    description = TextField(null=True)
+    price = PositiveBigIntegerField()
     level = PositiveSmallIntegerField()
     tap_step = PositiveSmallIntegerField()
+    bonus = PositiveBigIntegerField()
+    users = ManyToManyField(User, related_name="buttons", blank=True)
 
     def __str__(self) -> str:
         return self.name

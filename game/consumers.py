@@ -19,7 +19,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             user = await self.get_user()
             self.first = False
             return
-        print(text_data)
         user: User = await self.get_user()
         if text_data == 'inc_balance':
             if user.energy - user.tap_step <= 0:

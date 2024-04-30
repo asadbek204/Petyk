@@ -19,7 +19,7 @@
 
 body {
   width: 100vw;
-  height: 100dvh;
+  height: 100svh;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -111,10 +111,7 @@ body {
   height: 100%;
   width: 100%;
   max-width: 350px;
-  border-top-left-radius: 120% 150%;
-  border-top-right-radius: 120% 150%;
-  border-bottom-left-radius: 100%;
-  border-bottom-right-radius: 100%;
+  border-radius: 50%;
 }
 .container .game-play__icon:active {
   animation: click-animation 0.1s linear;
@@ -184,6 +181,9 @@ body {
 .option__icon {
   height: 100%;
 }
+.option__icon_left {
+  transform: translateX(-12%);
+}
 
 .detail,
 .boost {
@@ -201,6 +201,12 @@ body {
   transform: translateY(100%);
   background-color: #2f2223;
   color: var(--clr-button);
+}
+.detail__select,
+.boost__select {
+  width: 10px;
+  height: 10px;
+  background-color: white;
 }
 .detail_open,
 .boost_open {
@@ -261,6 +267,12 @@ body {
   flex-direction: column;
   justify-content: center;
   gap: 10px;
+}
+.detail__info-my,
+.boost__info-my {
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
 }
 .detail__price,
 .boost__price {

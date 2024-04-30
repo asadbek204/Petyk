@@ -26,6 +26,7 @@ let balanceEl = document.getElementById('balance')
 let energyIndicator = document.getElementById('energy-indicator')
 let bonusEl = document.getElementById('bonus')
 let detail = document.getElementById('detail')
+let button = document.getElementById('btn-play')
 
 function get_user(userId) {
     return {
@@ -38,7 +39,6 @@ function get_user(userId) {
 window.addEventListener(
     'popstate',
     (event) => {
-        console.log(event.state)
         closeWindow(event)
     }
 )
@@ -72,6 +72,13 @@ function showNotification(message) {
     }, 1250)
 }
 
+async function getButton() {
+    let response = await fetch(`/api/user/${userId}/button/`)
+    if (!response.ok) return false
+    let data = await response.json()
+    button.src = data.icon
+}
+
 class Game {
     constructor() {
         this.interval = setInterval(this.update, 5000)
@@ -79,7 +86,8 @@ class Game {
         this.websocket.onopen = () => {this.websocket.send(userId); this.update()};
         this.websocket.onerror = this.onError
         this.websocket.onmessage = this.onMessage
-        document.getElementById('btn-play').onclick = this.clickEgg
+        button.onclick = this.clickEgg
+        getButton()
     }
 
     onError() {
@@ -103,13 +111,11 @@ class Game {
 
     onMessage = message => {
         let data = JSON.parse(message.data);
-        console.log(data)
         tapStep = data.tap_step
         updateBalance(data.balance);
         updateEnergy(data.energy, data.energy_limit);
         updateEnergyIndicator();
         bonusEl.innerText = data.bonus
-        
     }
 
     showClickFeedback = (event) => {
@@ -133,7 +139,7 @@ function formatDescription(messageText) {
 async function openBoost(event) {
     updateState('detail', 'boost')
     let name = event.currentTarget.dataset.name
-    let data = await (await fetch(`/user/${userId}/boost/${name}`)).json()
+    let data = await (await fetch(`/api/user/${userId}/boost/${name}`)).json()
     detail.innerHTML = `
         <button class="detail__exit" onclick="window.history.back()">x</button>
         <div class="detail__info-block">
@@ -167,7 +173,7 @@ async function openBoost(event) {
 }
 
 async function buyBust(name) {
-    let response = await fetch(`/user/${userId}/buy/${name}`)
+    let response = await fetch(`/api/user/${userId}/buy/${name}`)
     let data = await response.json()
     if (!response.ok) return showNotification(data.detail)
     showNotification(data.message)
@@ -176,18 +182,19 @@ async function buyBust(name) {
     await getBoosts()
 }
 
-function renderBoost(boost) {
+function renderBoost(boost, own) {
     let li = document.createElement('li')
     li.className = 'boost__item'
-    li.onclick = openBoost
+    if (!own) li.onclick = openBoost
+    else li.onclick = selectButton
     li.dataset.name = boost.name
     li.innerHTML = `
         <div class="boost__img-container">
             <img class="boost__icon" src="${boost.icon}" alt="">
         </div>
-        <div class="boost__info">
+        <div class="boost__info${(own)? '-my': ''}">
             <span class="boost__name">${boost.name}</span>
-            <div class="boost__price">
+            <div class="boost__price" ${(own)? 'style="display: none"': ''}>
                 <div class="detail__coin"><img class="detail__coin-icon" src="/static/images/hen-head.png" alt=""></div>
                 <span ${(boost.price > balance)?'style="color: red"' : ""}>${boost.price}</span>
             </div>
@@ -195,6 +202,7 @@ function renderBoost(boost) {
     `
     return li
 }
+
 function renderStep(user) {
         let li = document.createElement('li')
         li.className = 'detail__item'
@@ -218,14 +226,14 @@ function renderStep(user) {
 }
 
 async function getStatistics() {
-    let response = await fetch('/statistics/')
+    let response = await fetch(`/api/user/${userId}/statistics/`)
     let data = await response.json()
     if (!response.ok) showNotification(data.detail)
     let ul = document.createElement('ul')
     ul.className = 'detail__list'
     let statistics = data.map(renderStep)
     for (let li of statistics) ul.appendChild(li)
-    if (statistics.length === 0) ul.innerHTML = `<div style="font-size: 30px; text-align: center; position: absolute; top: 40%; left: 50%; transform: translateX(-50%)">Statistics not found</div>`
+    if (statistics.length === 0) ul.innerHTML = `<div style="font-size: 25px; text-align: center; position: absolute; top: 40%; left: 50%; transform: translateX(-50%)">Statistics not found</div>`
     let content = document.createElement('div')
     content.className = 'detail__content'
     content.innerHTML =`<h1 class="detail__title" onclick="window.history.back()">↶ Рейтинг (топ: 100)</h1>`
@@ -257,7 +265,7 @@ async function copyToClipboard(src) {
 }
 
 async function getFriends() {
-    let response = await fetch(`/user/${userId}/friends/`)
+    let response = await fetch(`/api/user/${userId}/friends/`)
     let result = await response.json()
     let token = result.token
     let data = result.data
@@ -313,7 +321,7 @@ function renderTask(task) {
 }
 
 async function getTaks() {
-    let response = await fetch(`/tasks/`)
+    let response = await fetch(`/api/user/${userId}/tasks/`)
     let data = await response.json()
     if (!response.ok) showNotification(data.detail)
     let ul = document.createElement('ul')
@@ -331,13 +339,16 @@ async function getTaks() {
     updateState('detail', 'home')
 }
 
-async function getBoosts() {
-    let response = await fetch(`/user/${userId}/boosts/`)
-    if (!response.ok) console.log('exception')
+async function getBoosts(event) {
+    let response = await fetch(`/api/user/${userId}/boosts/my`)
+    let response2 = await fetch(`/api/user/${userId}/boosts/new`)
+    if (!response2.ok) showNotification('boosts not found')
     let data = await response.json()
+    let data2 = await response2.json()
     let list = document.getElementById('boost-list')
     list.innerHTML = ''
-    for (let boost of data) list.appendChild(renderBoost(boost))
+    for (let boost of data) list.appendChild(renderBoost(boost, true))
+    for (let boost of data2) list.appendChild(renderBoost(boost, false))
     let boostPage = document.getElementById('boost')
     boostPage.className = boostPage.className + " " + boostPage.className + "_open"
     updateState('boost', 'home')
@@ -348,6 +359,19 @@ function closeWindow(event) {
     let page = document.getElementById(event.state.next)
     page.className = page.classList[0]
     if (event.state?.page === 'home') game.update()
+}
+
+async function selectButton(event) {
+    let name = event.currentTarget.dataset.name
+    let response = await fetch(`/api/user/${userId}/select/${name}/`)
+    if (response.ok) {
+        getButton()
+        showNotification(`${name} selected`)
+    }
+    else {
+        let data = await response.json()
+        showNotification(data.detail)
+    }
 }
 
 document.getElementById('back-button').onclick = () => window.history.back()

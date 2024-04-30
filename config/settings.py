@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'market',
     'game',
     'user',
-    'tasks'
 ]
 
 MIDDLEWARE = [

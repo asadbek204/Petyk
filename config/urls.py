@@ -22,7 +22,7 @@ from user.views import page
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('user.urls')),
+    path('api/user/<int:id>/', include('user.urls')),
     path('', page)
 ]
 

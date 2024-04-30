@@ -9,11 +9,12 @@ class User(Model):
     ref_link = CharField(max_length=256)
     wallet_address = CharField(max_length=256)
     energy = PositiveBigIntegerField()
-    energy_limit = PositiveBigIntegerField()
+    energy_limit = PositiveBigIntegerField(default=10000)
     level = PositiveSmallIntegerField()
     bonus = PositiveBigIntegerField()
     tap_step = PositiveSmallIntegerField()
-    refered_by = ManyToManyField("self", related_name="friends", null=True, blank=True)
+    refered_by = ManyToManyField("self", related_name="friends")
+    button = OneToOneField("market.Button", on_delete=SET_NULL, null=True, blank=True, default=1)
 
     def __str__(self) -> str:
         return f"{self.user_id}"
