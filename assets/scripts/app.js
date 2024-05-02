@@ -25,6 +25,7 @@ let energyEl = document.getElementById('energy-exists')
 let balanceEl = document.getElementById('balance')
 let energyIndicator = document.getElementById('energy-indicator')
 let bonusEl = document.getElementById('bonus')
+let bonusSecondsEl = document.getElementById('extra-seconds')
 let detail = document.getElementById('detail')
 let button = document.getElementById('btn-play')
 
@@ -81,7 +82,7 @@ async function getButton() {
 
 class Game {
     constructor() {
-        this.interval = setInterval(this.update, 5000)
+        this.interval = setInterval(this.update, 1000)
         this.websocket = new WebSocket(`ws://${window.location.host}/user/ws/game/`);
         this.websocket.onopen = () => {this.websocket.send(userId); this.update()};
         this.websocket.onerror = this.onError
@@ -116,6 +117,7 @@ class Game {
         updateEnergy(data.energy, data.energy_limit);
         updateEnergyIndicator();
         bonusEl.innerText = data.bonus
+        bonusSecondsEl.innerText = `в ${data.button.seconds} сек.`
     }
 
     showClickFeedback = (event) => {
@@ -191,7 +193,6 @@ function renderBoost(boost, own) {
     let name = list[list.length - 1].split('_')[0]
     let list2 = boost.icon.split('/')
     let name2 = list2[list2.length - 1].split('_')[0]
-    console.log(name, name2)
     li.dataset.name = boost.name
     li.innerHTML = `
         <div class="boost__img-container">

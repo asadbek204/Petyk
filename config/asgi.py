@@ -23,12 +23,19 @@ my_timezone = timezone('Asia/Tashkent')
 scheduler = BackgroundScheduler(time_zone=my_timezone)
 
 def energy_increaser():
-    User.objects.filter(energy__lt=F('energy_limit')).update(energy=F('energy') + 1, balance=F('balance') + F('bonus'))
+    timer = 0
+    def worker():
+        nonlocal timer
+        if timer > 10:
+            timer = 0
+        User.objects.filter(energy__lt=F('energy_limit'), button__seconds=timer).update(energy=F('energy') + 1, balance=F('balance') + F('bonus'))
+        timer += 1
+    return worker
 
 scheduler.add_job(
-    energy_increaser,
+    energy_increaser(),
     trigger="interval",
-    seconds=10
+    seconds=1
 )
 scheduler.start()
 

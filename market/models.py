@@ -11,6 +11,7 @@ class Button(Model):
     tap_step = PositiveSmallIntegerField()
     bonus = PositiveBigIntegerField()
     users = ManyToManyField(User, related_name="buttons", blank=True)
+    seconds = PositiveSmallIntegerField(default=10)
 
     def __str__(self) -> str:
         return self.name
