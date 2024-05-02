@@ -187,17 +187,23 @@ function renderBoost(boost, own) {
     li.className = 'boost__item'
     if (!own) li.onclick = openBoost
     else li.onclick = selectButton
+    let list = button.src.split('/')
+    let name = list[list.length - 1].split('_')[0]
+    let list2 = boost.icon.split('/')
+    let name2 = list2[list2.length - 1].split('_')[0]
+    console.log(name, name2)
     li.dataset.name = boost.name
     li.innerHTML = `
         <div class="boost__img-container">
             <img class="boost__icon" src="${boost.icon}" alt="">
         </div>
-        <div class="boost__info${(own)? '-my': ''}">
+        <div class="boost__info${(own)? '_my': ''}">
             <span class="boost__name">${boost.name}</span>
             <div class="boost__price" ${(own)? 'style="display: none"': ''}>
                 <div class="detail__coin"><img class="detail__coin-icon" src="/static/images/hen-head.png" alt=""></div>
                 <span ${(boost.price > balance)?'style="color: red"' : ""}>${boost.price}</span>
             </div>
+            ${(name === name2)? '<div class="boost__selected"></div>': ''}
         </div>
     `
     return li
@@ -372,6 +378,7 @@ async function selectButton(event) {
         let data = await response.json()
         showNotification(data.detail)
     }
+    window.history.back()
 }
 
 document.getElementById('back-button').onclick = () => window.history.back()

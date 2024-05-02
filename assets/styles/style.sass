@@ -44,14 +44,14 @@ body
     max-height: 890px
     min-height: 650px
     height: 100dvh
-    padding: 10% 0
+    padding: 5% 0
     width: 90%
     display: flex
     flex-direction: column
     justify-content: space-between
     align-items: center
     gap: 12%
-        
+
     .game-play
         width: 100%
         display: flex
@@ -95,14 +95,17 @@ body
             font-size: 28px
             
         &__joystick
+            display: flex
+            justify-content: center
+            align-items: center
             height: 35vh
             max-height: 340px
             width: 80%
             background-color: transparent
 
         &__icon
-            height: 100%
-            width: 100%
+            height: 35vh
+            width: 35vh
             max-width: 350px
             border-radius: 50%
             // border-top-left-radius: 120% 150%
@@ -196,11 +199,13 @@ body
     background-color: #2f2223
     color: var(--clr-button)
 
-    &__select
+    &__selected
+        display: inline-block
         width: 10px
         height: 10px
-        background-color: white
-
+        margin-left: 10px
+        background-color: #2dbd2d
+        border-radius: 50%
 
     &_open
         transform: translateY(0)
@@ -253,9 +258,9 @@ body
         justify-content: center
         gap: 10px
 
-        &-my
+        &_my
             flex-direction: row
-            justify-content: flex-start
+            justify-content: space-between
             align-items: center
 
     &__price

@@ -36,12 +36,13 @@ def get_boost(request: Request, id: int, name: str):
 def buy_boost(request: Request, id: int, name: str):
     try:
         user = User.objects.get(user_id=id)
-    except User.DoesNotExist:
-        return Response(status=404, data={'detail': 'usser not found'})
-    try:
         button = Button.objects.get(name=name)
+    except User.DoesNotExist:
+        return Response(status=404, data={'detail': 'user not found'})
     except Button.DoesNotExist:
         return Response(status=404, data={'detail': 'button not found'})
+    if user in button.users:
+        return Response(status=400, data={'detail': 'boost already your'})
     button.users.add(user)
     user.balance -= button.price
     user.bonus = button.bonus

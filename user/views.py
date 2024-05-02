@@ -53,7 +53,6 @@ def create_harem(request: Request, id: int):
     except User.DoesNotExist:
         return Response(status=404, data={'detail': 'user not found'})
     request.data.update(owner=int(id))
-    print(request.data)
     harem = HaremInSerializer(data=request.data)
     if harem.is_valid():
         harem.save()
